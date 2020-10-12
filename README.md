@@ -6,6 +6,8 @@ In this guide, I will deply the AWS Database Migration Service to migrate an EC2
 
 This guide assumes a non-production Postgres workload data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security as well any compliance requirements. To simplify the guide and keep it to a magable size, workloads are provisioned with public endpoints,  no encryption, and using basic authintication. 
 
+I will deploy a Postgres 12 DB so the command line options will reflect that. Ensure that the commands are updated to reflect your version of Postgres. 
+
 ***Guide Outline***
 This guide is made up of the following sections:
 * Deploy an EC2 hosted Postgres DB
