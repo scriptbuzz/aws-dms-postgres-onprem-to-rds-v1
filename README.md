@@ -16,4 +16,6 @@ This guide is made up of the following sections:
   * Create the DMS Replication Instance
   * Create and Test The DMS Source Endpoint
   * Create and Test The DMS Target Endpoint
-  
+  * Create a DMS Migration Task
+  * Run the DMS Migration Task
+  * Verify table migration from source DB to target DB. 
