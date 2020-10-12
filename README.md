@@ -1,6 +1,6 @@
 # aws-dms-postgres-onprem-to-rds-v1
 
-**Overview of Guide
+**Overview of Guide**
 
 In this guide, I will be using the AWS Database Migration Service to migrate an EC2-hosted Postgres (or on-prem) to RDS Postgres.
 
