@@ -314,4 +314,12 @@ https://youtu.be/QHKhyzPUPaU
 
 Thank you...
 
+**References**
+* AWS Database Migration Service (DMS) https://aws.amazon.com/dms/
+* Install Postgres on Ubuntu  https://ubuntu.com/server/docs/databases-postgresql
+* Postgres downloads https://www.postgresql.org/download/linux/ubuntu/
+* Deploy an Amazon RDS Postgres database https://aws.amazon.com/getting-started/tutorials/create-connect-postgresql-db/
+* pgAdmin Postgres Tools https://www.pgadmin.org/
+
+
 
