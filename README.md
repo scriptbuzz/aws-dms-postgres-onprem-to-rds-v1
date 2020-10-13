@@ -125,7 +125,7 @@ Follow the RDS database creation wizard. I have chosen the settings for convenin
 ```bash
 sudo -u postgres psql template1
 ```
-* list key database resource
+* From the psql comman line, list key database resource
 ```bash
 \l
 ```
@@ -157,9 +157,15 @@ CREATE TABLE land_registry_price_paid_uk(
   ppd_category_type char(1),
   record_status char(1));
 ```
+* Quit psql
+```bash
+\q
+```
+* You will now return to the OS command line.
+
 **Import land_registry_price_paid_uk CVS data***
 
-- I use pgAdmin for this task simply because of the simplicity
+- I will pgAdmin for this task because of the simplicity of the workflow but you can use psql command line tool
 - Right click on the table land_registry_price_paid_uk
 - Select Import/Export from the menu
 - In the dialog box, select Import from the slider
