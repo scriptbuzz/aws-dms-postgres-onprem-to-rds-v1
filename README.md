@@ -1,8 +1,6 @@
 # aws-dms-postgres-onprem-to-rds
 
-***ROUGH DRAFT***
-
-**TODO: Add screen captures and video**
+***DRAFT***
 
 ***Overview of Guide***
 
