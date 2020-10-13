@@ -222,10 +222,16 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Instance class: dms.t2.medium
 * Engine version: 3.3.4
 * Storage Allocation: 50 GB (default)
+
+![DMS Replication part01 endpoint](assets/mbx-dms-rep-instance01.png)
+
 * VPC: Default
 * Multi-AZ: uncheck/deselect
 * Publicly accessible: check/select
 * Advanced security and network configuration: accept defaults
+
+![DMS Replication part02 endpoint](assets/mbx-dms-rep-instance02.png)
+
 * Maintenance: accept defaults
 * Click on Create
 * Wait for Status to change to Available
