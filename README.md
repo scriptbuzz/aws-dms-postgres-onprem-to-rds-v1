@@ -205,3 +205,18 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Create and test the target DB endpoint
 * Create the Migration Task
 * Validate/Iterate until all the required data is migrated from the EC2 hosted Postgres to the RDS Postgres.
+
+**Create Replication Instance**
+
+* Assign a name to the replication instance
+* Instance class: dms.t2.medium
+* Engine version: 3.3.4
+* Storage Allocation: 50 GB (default)
+* VPC: Default
+* Multi-AZ: uncheck/deselect
+* Publicly accessible: check/select
+* Advanced security and network configuration: accept defaults
+* Maintenance: accept defaults
+* Click on Create
+* Wait for Status to change to Available
+
