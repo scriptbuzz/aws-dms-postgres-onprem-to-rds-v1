@@ -1,4 +1,4 @@
-# aws-dms-postgres-onprem-to-rds-v1
+# aws-dms-postgres-onprem-to-rds
 
 ***ROUGH DRAFT***
 
@@ -260,4 +260,16 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * If not, troubleshoot cause and proceed to next step
 
 Once you you have successful endpoint tests, proceed to create the migration task
+
+**Create The Database Migration Task**
+* From the Database Migration Service dashboard
+* Select Database migration tasks
+* Select Create task
+* Enter a name for Task identifier
+* From the Replication instance dropdown menu, select the replication instance you have created earlier
+* From the Source database endpoint, select the source EC2 endpoint
+* From the Target database endpoint, select the target RDS endpoint
+* From the Migration typ, select Migrate existing data
+* In the Task settings panel, Editing mode, select Wizard
+* 
 
