@@ -109,7 +109,7 @@ Follow the RDS database creation wizard. I have chosen the settings for convenin
 * Connectivity: Select the VPC. The default VPC will work. 
 * Subnet group: Select from available. 
 * Public access: Yes
-* VPC security group: select the default security group as well as a security group with inbound rule that opens up the database port (in our case port 5432)
+* VPC security group: select the default security group as well as a security group with inbound rule that opens up the database port (in this case port 5432)
 * Availability Zone: AZ1
 * Database port: 5432
 * Database authentication: Password authentication
@@ -118,6 +118,25 @@ Follow the RDS database creation wizard. I have chosen the settings for convenin
 * For the remaining options, I have unchecked them but feel free to enable the options that you need for your testing purposes. 
 * Select Create and wait for the status to show the DB is Available.
 * Click the View credentials details button on the upper right to copy your DB credentials.   
+
+***Deploy pgAdmin
+
+pgAdmin is a popular GUI clinet for Postgres. You can pefrom various admin and development tasks with the help of this user firendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer command line tool, pgql will dp nicely too. 
+
+For this section, we will need the following data ready:
+
+* Public IP of the EC2 instance hosting the source Postgres DB 
+* The endpoint for the target Postgres RDS DB
+* Access credentials for both DBs. 
+* Ensure that security groups attached to both DBs allow incoming traffic to and from the internet thru port 5432.
+
+Let's proceed to deploy pgAdmin. 
+
+* Download pgAdmin for your OS: https://www.pgadmin.org/
+* Install pgAdmin according to the OS instructions.
+* Create a New Server connection record for the source Postgres running on the EC2 instance, and verify connectivity.
+* Create a New Server connection record for the target Postgres in RDS, and verify connectivity.
+
 
 ***Load Test Data Into The Source Postgres DB***
 
