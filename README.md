@@ -219,7 +219,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * From the left panel, select Replication instances
 * Click on Create application instance
 * Fill out the wizard forms
-* Assign a name to the replication instance
+* Assign a name to the replication instance. 
 * Instance class: dms.t2.medium
 * Engine version: 3.3.4
 * Storage Allocation: 50 GB (default)
@@ -237,7 +237,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * From the left panel, select Endpoints
 * Select Source endpoint
 * Fill out the wizard forms
-* Assign a name to the Endpoint identifier
+* Assign a name to the Endpoint identifier. Ex: mbx-postgres-ec2-source
 * From the Source engine dropdown menu, select postgres
 * For Server name, provide the public IP address for the EC2 Postgres instance. 
 * Port: 5432
@@ -256,6 +256,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * From the Database Migration Service dashboard
 * From the left panel, select Endpoints
 * Select Target endpoint 
+* Assign a name to the Endpoint identifier. Ex: mbx-target-postgres-rds
 * Check Select RDS DB instance
 * From the dropdown menu, select the RDS Postgres DB you have created earlier
 * The remaining fields will be filled out automatically based on your RDS database selection except the password which you will need to provide
