@@ -184,7 +184,7 @@ CREATE TABLE land_registry_price_paid_uk(
 ```
 * You will now return to the OS command line.
 
-**Import land_registry_price_paid_uk CVS data***
+***Import land_registry_price_paid_uk CSV Data***
 
 * I will use pgAdmin for the data import task because of the simplicity of the workflow, the psql command line tool can do the trick too. 
 * Find the mbxDB and expand it
@@ -195,3 +195,13 @@ CREATE TABLE land_registry_price_paid_uk(
 * Import the file from your local drive or from where you downloaded the csv file to. 
 * Select the CVS file and wait for successful import
 * Verify data is uploaded using pgAdmin by viewing data rows from the land_registry_price_paid_uk table
+
+***Provision the Database Migration Service***
+
+In this section, I will configure the DMS resources that will kick-off the database migration. The steps invloved are as follows:
+
+* Create a Replication Instance
+* Create and test the source DB endpoint
+* Create and test the target DB endpoint
+* Create the Migration Task
+* Validate/Iterate until all the required data is migrated from the EC2 hosted Postgres to the RDS Postgres.
