@@ -9,7 +9,9 @@ This guide assumes a non-production Postgres workload data running in a non-prod
 
 
 ***Guide Outline***
+
 This guide is made up of the following sections:
+
 * Deploy an EC2 hosted Postgres DB
 * Deploy an RDS Postgres DB
 * Install pgAdmin, a popular GUI client for Postgres DB
