@@ -8,6 +8,7 @@
 
 In this guide, I will deploy AWS Database Migration Service pipeline to migrate an EC2-hosted Postgres source database (or on-prem) to RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings will reflect that. Please ensure that the commands are updated to reflect your version of Postgres. 
 
+![AWS DMS](assets/mbx-dms-diagram.png)
 
 This guide assumes a non-production Postgres workload and data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security and compliance. To simplify the guide and keep it to a managable size, workloads are provisioned with public endpoints, no encryption, and using basic authintication schemes.  
 
