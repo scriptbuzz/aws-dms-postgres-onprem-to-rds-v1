@@ -270,6 +270,21 @@ Once you you have successful endpoint tests, proceed to create the migration tas
 * From the Source database endpoint, select the source EC2 endpoint
 * From the Target database endpoint, select the target RDS endpoint
 * From the Migration typ, select Migrate existing data
-* In the Task settings panel, Editing mode, select Wizard
-* 
+* In the Task settings panel > Editing mode, select Wizard
+* Select Drop tables on target (default)
+* Select Limited LOB mode (default)
+* For Maximum LOB size (KB), keep the 32K value. 
+* Check Enable CloudWatch logs
+* In the Table mappings panel > Editing mode, select Wizard
+* Expand Selection rules
+* For Schema name, enter %
+* For Table name, enter %
+* Select Create task
+* If the Task did not start, from the Actions dropdown meny, select Restart/Resume
+* In the Summary panel, wait for the status to show Load complete
+* From the Table statistics panel, scroll to verify that you have 67,788 rows loaded
+* Using pgAdmin, verify that the data is migrated to RDS. 
+
+Thank you...
+
 
