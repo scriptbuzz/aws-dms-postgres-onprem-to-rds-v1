@@ -4,51 +4,51 @@
 
 ***Overview of Guide***
 
-In this guide, I will deploy AWS Database Migration Service pipeline to migrate an EC2-hosted Postgres source database (or on-prem) to RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings will reflect that. Please ensure that the commands are updated to reflect your version of Postgres. 
+In this guide, I will deploy an AWS Database Migration Service (DMS) pipeline to migrate an EC2-hosted Postgres source database (or on-prem) to an RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings in this guide will reflect the version number. Please ensure that the commands are updated to reflect your version of Postgres. 
 
 ![AWS DMS](assets/mbx-dms-diagram.png)
 
-This guide assumes a non-production Postgres workload and data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security and compliance. To simplify the guide and keep it to a managable size, workloads are provisioned with public endpoints, no encryption, and using basic authintication schemes.  
+This guide assumes a non-production Postgres workload and data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security and compliance. To simplify the guide and keep it to a managable length, workloads are provisioned with public endpoints, no encryption unless enabled by default, and basic authintication. When possible, I have left the default values unchanged during the creation of cloud resources.    
 
-When the migration is complete, a table hosted on the on-premise (EC2) Postgres will be migrated to an Amazon RDS Postgres database.
+When the migration is complete, a table hosted on the on-premise (EC2) Postgres database will be migrated to an Amazon RDS Postgres database.
 
-***Guide Outline***
+***Database Migration Guide Outline***
 
 This guide is made up of the following sections:
 
-* Deploy an EC2 hosted Postgres DB
+* Deploy an EC2-hosted Postgres DB
 * Deploy an RDS Postgres DB
 * Install pgAdmin, a popular GUI client for Postgres DB
-* Import test data to the EC2 Postgres DB
+* Import test data into the EC2 Postgres DB
 * Deploy the Database Migration Service (DMS)
   * Create the DMS Replication Instance
-  * Create and Test The DMS Source Endpoint
-  * Create and Test The DMS Target Endpoint
+  * Create and Test The DMS Source EC2 Endpoint
+  * Create and Test The DMS Target RDS Endpoint
   * Create a DMS Migration Task
   * Run the DMS Migration Task
-  * Verify table migration from source DB to target DB. 
+  * Verify table data migration from source DB to target DB. 
   
 
 ***Deploy an EC2-hosted Postgres DB***
 
 * Login to the AWS Management Console 
 * Set your AWS Region
-* From EC2 Dashboard: 
+* From the EC2 dashboard: 
 * Launch a new EC2 instance using the Amazon-managed Ubuntu 20.x AMI
-* Select EC2 Instance Type m5a.large (or the type that works best for you)
+* Select EC2 Instance Type m5a.large
 * Select the default VPC
-* Select subnet/AZ
-* Enable Assign Public IP. Later, attach an EIP so you don't end up with a different public IP address every time you restart your EC2 instance. 
+* Select desired subnet/AZ
+* Enable Assign Public IP. Later, attach an Elastic IP so you don't end up with a different public IP address every time you restart your EC2 instance. 
 * Optional: Attach IAM SSM Role (to allow remote access into EC2 without the need for SSH)
 * For storage, assign 20 GB for good measures. This is more than enough for the test dataset
-* Assign a useful Name tag to the EC2 instance
-* Select Security Group with inbound rule for the Postgres port. Typically, it is port 5432. If you will be using SSH, also open port 22 
+* Assign a tag to the EC2 instance
+* Select Security Group with inbound rule for the Postgres port. Typically, the port is 5432. If you will be using SSH, also open port 22 
 * Review your configuration and Launch the EC2 instance
-* Wait for EC2 instance until it's "Running" with a status check of 2/2
-* Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when configuring your server access as well as the DMS endpoints. 
+* Wait for EC2 instance until you see "Running" with a status check of 2/2
+* Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when you configure your server access as well as the DMS endpoints. 
 * Connect to the EC2 instance using your favorite method. I prefer to use the AWS SSM Remote Session. 
 
-Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12. PostgreSQL configuration files are stored in the /etc/postgresql/<version>/main directory. For example, if you install PostgreSQL 12, the configuration files are stored in the /etc/postgresql/12/main directory.
+Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12. PostgreSQL configuration files are stored in the /etc/postgresql/<version>/main directory. For example, if you plan to install PostgreSQL 12, the configuration files are stored in the /etc/postgresql/12/main directory.
 
 * From the command prompt, enter the following commands:
 ```bash
