@@ -87,3 +87,26 @@ ALTER USER postgres with encrypted password 'your_password';
 ```bash
 sudo systemctl restart postgresql.service
 ```
+***Provision The Target RDS Postgres 12 Database***
+* Login to AWS Management Console and proceeds to the RDS Dashboard.
+* Select Postgres
+* Select Template: Dev/Test
+* Assign a DB instance identifier/name
+* Set Master username: postgres
+* Assign a Master password
+* Set DB instance size: Select standard class / db.m5.large
+* Set Storage: 40GB
+* Storage autoscaling: disable/uncheck
+* Multi-AZ deployment: Check Do not create a standby instance. 
+* Connectivity: Select the VPC. The default VPC will work. 
+* Subnet group: Select from available. 
+* Public access: Yes
+* VPC security group: select the default security group as well as a security group with inbound rule that opens up the database port (in our case port 5432)
+* Availability Zone: AZ1
+* Database port: 5432
+* Database authentication: Password authentication
+* Database options: Assign an initial database name
+* DB parameter group: select the default or your customized option group
+* For the remaining options, I have unchecked them but feel free to enable the options that you need for your testing purposes. 
+* Select Create and wait for the status to show the DB is Available.
+* Click the View credentials details button on the upper right to copy your DB credentials.   
