@@ -300,10 +300,9 @@ Once you you have successful endpoint tests, proceed to create the migration tas
 * Select Create task
 * If the Task did not start, from the Actions dropdown meny, select Restart/Resume
 * In the Summary panel, wait for the status to show Load complete
+![DMS Success info](assets/mbx-dms-rep-instance-tasks.png)
 * From the Table statistics panel, scroll to verify that you have 67,788 rows loaded
-
 ![DMS Success stats](assets/mbx-dms-rep-instance-migration-stats.png)
-
 * Using pgAdmin, verify that the data is migrated to RDS. 
 
 Thank you...
