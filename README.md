@@ -42,7 +42,7 @@ This guide is made up of the following sections:
 •	Wait for EC2 instance until it's "Running" with a status check of 2/2
 •	Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when configuring your server access as well as the DMS endpoints. 
 •	Connect to the EC2 instance using your favorite method. I prefer to use the AWS SSM Remote Session. 
-Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12.
+Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12. PostgreSQL configuration files are stored in the /etc/postgresql/<version>/main directory. For example, if you install PostgreSQL 12, the configuration files are stored in the /etc/postgresql/12/main directory.
 * Run the following commands:
 ```bash
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
@@ -59,5 +59,28 @@ sudo vim /etc/postgresql/12/main/postgresql.conf
 ```bash
 listen_addresses = '*'
 ```
+* Save & exit the file. 
+* Enable TCP/IP connections and use the MD5 method for client authentication for postgres user. Update the file file pg_hba.conf:
 
-
+```bash
+sudo vim /etc/postgresql/12/main/pg_hba.conf
+```
+* Add the following lines then save & exit the file. 
+```bash
+local   all    postgres       md5
+host    all    all            0.0.0.0/0                       md5
+host    all    all            ::/0                            md5
+```
+* To set a password for the default postgres user. Run the following command at a terminal prompt to connect to the default PostgreSQL template database:
+```bash
+sudo -u postgres psql template1
+```
+* From the SQL prompt, enter the command:
+```bash
+ALTER USER postgres with encrypted password 'your_password';
+```
+* Quit the SQL prompt with the command: ```bash\q```
+•	Restart Postgres for the changes to take effect:
+```bash
+sudo systemctl restart postgresql.service
+```
