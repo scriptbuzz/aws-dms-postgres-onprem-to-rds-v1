@@ -184,9 +184,12 @@ CREATE TABLE land_registry_price_paid_uk(
 
 **Import land_registry_price_paid_uk CVS data***
 
-- I will pgAdmin for this task because of the simplicity of the workflow but you can use psql command line tool
-- Right click on the table land_registry_price_paid_uk
-- Select Import/Export from the menu
-- In the dialog box, select Import from the slider
-- Select the CVS file and wait for successful import
-- Verify data is uploaded using pgAdmin by viewing data rows from the land_registry_price_paid_uk table
+* I will use pgAdmin for the data import task because of the simplicity of the workflow, the psql command line tool can do the trick too. 
+* Find the mbxDB and expand it
+* Find and select the land_registry_price_paid_uk table 
+* Right click on the table land_registry_price_paid_uk
+* Select Import/Export from the menu
+* In the dialog box, select Import from the Export/Import slider
+* Import the file from your local drive or from where you downloaded the csv file to. 
+* Select the CVS file and wait for successful import
+* Verify data is uploaded using pgAdmin by viewing data rows from the land_registry_price_paid_uk table
