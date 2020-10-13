@@ -2,11 +2,11 @@
 
 **Overview of Guide**
 
-In this guide, I will deply the AWS Database Migration Service to migrate an EC2-hosted Postgres source database (or on-prem) to RDS Postgres target database.
+In this guide, I will deply the AWS Database Migration Service to migrate an EC2-hosted Postgres source database (or on-prem) to RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings will reflect that. Please ensure that the commands are updated to reflect your version of Postgres. 
+
 
 This guide assumes a non-production Postgres workload data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security as well any compliance requirements. To simplify the guide and keep it to a magable size, workloads are provisioned with public endpoints,  no encryption, and using basic authintication. 
 
-I will deploy a Postgres 12 DB so the command line options will reflect that. Ensure that the commands are updated to reflect your version of Postgres. 
 
 ***Guide Outline***
 This guide is made up of the following sections:
@@ -41,6 +41,23 @@ This guide is made up of the following sections:
 •	Review your configuration and Launch the EC2 instance
 •	Wait for EC2 instance until it's "Running" with a status check of 2/2
 •	Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when configuring your server access as well as the DMS endpoints. 
-•	Connect to the EC2 instance using your favorite method. I prefer the SSM Remote Session. 
+•	Connect to the EC2 instance using your favorite method. I prefer to use the AWS SSM Remote Session. 
+Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12.
+* Run the following commands:
+```bash
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get -y install postgresql-12
+```
+* To allow remote connection to my PostgreSQL DB, I will modify the postgresql.conf file. Please update the command path to reflect your Postgres version number:
+```bash
+sudo vim /etc/postgresql/12/main/postgresql.conf
+```
+
+* Locate the line #listen_addresses = ‘localhost’ and change/uncomment to:
+```bash
+listen_addresses = '*'
+```
 
 
