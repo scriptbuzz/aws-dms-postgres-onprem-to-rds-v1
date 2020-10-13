@@ -118,3 +118,50 @@ Follow the RDS database creation wizard. I have chosen the settings for convenin
 * For the remaining options, I have unchecked them but feel free to enable the options that you need for your testing purposes. 
 * Select Create and wait for the status to show the DB is Available.
 * Click the View credentials details button on the upper right to copy your DB credentials.   
+
+***Load Test Data Into The Source Postgres DB***
+
+* From the EC2 Postgres server, log into the psql command line utility
+```bash
+sudo -u postgres psql template1
+```
+* list key database resource
+```bash
+\l
+```
+* Create the test database to be migrated. I am assigning the name mbxDB to my database but you can assign a different name. 
+```bash
+create database mbxDB;
+```
+* Make mbxDB active
+```bash
+\c mbxDB
+```
+* Create table structure for table land_registry_price_paid_uk
+```bash
+CREATE TABLE land_registry_price_paid_uk(
+  transaction uuid,
+  price numeric,
+  transfer_date date,
+  postcode text,
+  property_type char(1),
+  newly_built boolean,
+  duration char(1),
+  paon text,
+  saon text,
+  street text,
+  locality text,
+  city text,
+  district text,
+  county text,
+  ppd_category_type char(1),
+  record_status char(1));
+```
+**Import land_registry_price_paid_uk CVS data***
+
+- I use pgAdmin for this task simply because of the simplicity
+- Right click on the table land_registry_price_paid_uk
+- Select Import/Export from the menu
+- In the dialog box, select Import from the slider
+- Select the CVS file and wait for successful import
+- Verify data is uploaded using pgAdmin by viewing data rows from the land_registry_price_paid_uk table
