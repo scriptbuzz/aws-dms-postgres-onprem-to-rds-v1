@@ -12,9 +12,9 @@ In this guide, I will deploy AWS Database Migration Service pipeline to migrate 
 
 This guide assumes a non-production Postgres workload and data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security and compliance. To simplify the guide and keep it to a managable size, workloads are provisioned with public endpoints, no encryption, and using basic authintication schemes.  
 
-When the migration is complete, a table hosted on the on-premise (EC2) Postgres will be migrated to an Amazon RDS Postgres database. 
+When the migration is complete, a table hosted on the on-premise (EC2) Postgres will be migrated to an Amazon RDS Postgres database. This video clip will show the final resul of migrated data. 
 
-https://youtu.be/_Y_BypsGATA
+https://youtu.be/cbODmUXeR1s
 
 ***Guide Outline***
 
