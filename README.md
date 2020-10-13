@@ -282,7 +282,7 @@ Once you you have successful endpoint tests, proceed to create the migration tas
 * From the Database Migration Service dashboard
 * Select Database migration tasks
 * Select Create task
-* Enter a name for Task identifier
+* Enter a name for Task identifier. Ex: mbx-postgres-migration-task
 * From the Replication instance dropdown menu, select the replication instance you have created earlier
 * From the Source database endpoint, select the source EC2 endpoint
 * From the Target database endpoint, select the target RDS endpoint
