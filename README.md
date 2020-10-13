@@ -242,18 +242,18 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Expand the Test endpoint connection 
 * Select the default VPC
 * Select the replication instance name you have created
-* Select Run test. 
+* Select Run test
 * Wait for the test status to show successful
 * If not, troubleshoot cause before you proceed to next step
 
-**Create And Test The Targt DB Endpoint**
+**Create And Test The Target DB Endpoint**
 
 * From the Database Migration Service dashboard
 * From the left panel, select Endpoints
 * Select Target endpoint 
 * Check Select RDS DB instance
 * From the dropdown menu, select the RDS Postgres DB you have created earlier
-* The remaining fields will be filled out automatically based on your RDS database selection except the password which you will need to provide. 
+* The remaining fields will be filled out automatically based on your RDS database selection except the password which you will need to provide
 * Expand the Test endpoint connection 
 * Select the default VPC
 * Select the replication instance name you have created
