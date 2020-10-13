@@ -38,7 +38,7 @@ This guide is made up of the following sections:
 * Select EC2 Instance Type m5a.large (or the type that works best for you)
 * Select the default VPC
 * Select subnet/AZ
-* Enable Assign Public IP. Later, attach an EIP so you don't end up with a different public IP address everytime you restart your EC2 instance. 
+* Enable Assign Public IP. Later, attach an EIP so you don't end up with a different public IP address every time you restart your EC2 instance. 
 * Optional: Attach IAM SSM Role (to allow remote access into EC2 without the need for SSH)
 * For storage, assign 20 GB for good measures. This is more than enough for the test dataset
 * Assign a useful Name tag to the EC2 instance
@@ -98,7 +98,7 @@ Now it's time to provision the target RDS database that we wish to migrate to.
 
 ***Provision The Target RDS Postgres 12 Database***
 
-Follow the RDS database creation wizard. I have chosen the settings for convenince and to keep the guide short. In your AWS environment, your settings may vary according to your security, performance, and cost optimixation requirements.  
+Follow the RDS database creation wizard. I have chosen the settings for convenience and to keep the guide short. In your AWS environment, your settings may vary according to your security, performance, and cost optimization requirements.  
 
 * Login to AWS Management Console and proceeds to the RDS Dashboard.
 * Select Postgres
@@ -123,9 +123,9 @@ Follow the RDS database creation wizard. I have chosen the settings for convenin
 * Select Create and wait for the status to show the DB is Available.
 * Click the View credentials details button on the upper right to copy your DB credentials.   
 
-***Deploy pgAdmin For Posgres Admininstration***
+***Deploy pgAdmin For Postgres Administration***
 
-pgAdmin is a popular GUI clinet for Postgres. You can pefrom various admin and development tasks with the help of this user firendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer command line tool, the psql utlity is your goto tool. 
+pgAdmin is a popular GUI client for Postgres. You can perform various admin and development tasks with the help of this user friendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer command line tool, the psql utility is your goto tool. 
 
 For this section, we will need the following data ready:
 
