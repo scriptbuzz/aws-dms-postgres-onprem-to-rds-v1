@@ -79,8 +79,11 @@ sudo -u postgres psql template1
 ```bash
 ALTER USER postgres with encrypted password 'your_password';
 ```
-* Quit the SQL prompt with the command: ```bash\q```
-•	Restart Postgres for the changes to take effect:
+* Quit the SQL prompt with the command: 
+```bash
+\q
+```
+* Restart Postgres for the changes to take effect:
 ```bash
 sudo systemctl restart postgresql.service
 ```
