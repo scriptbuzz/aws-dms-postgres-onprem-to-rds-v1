@@ -148,7 +148,7 @@ Let's proceed to install pgAdmin.
 ```bash
 sudo -u postgres psql template1
 ```
-* From the psql comman line, list key database resource
+* From the psql command line, list key database resource
 ```bash
 \l
 ```
@@ -198,20 +198,20 @@ CREATE TABLE land_registry_price_paid_uk(
 * Select the CVS file and wait for successful import
 * Verify data is uploaded using pgAdmin by viewing data rows from the land_registry_price_paid_uk table
 
-***Provision the Database Migration Service***
+***Provision The Database Migration Service***
 
-In this section, I will configure the DMS resources that will kick-off the database migration. The steps invloved are as follows:
+In this section, I will configure the DMS resources that will kick-off the database migration. The steps involved are as follows:
 
 * Create a Replication Instance
 * Create and test the source DB endpoint
 * Create and test the target DB endpoint
 * Create the Migration Task
-* Validate/Iterate until all the required data is migrated from the EC2 hosted Postgres to the RDS Postgres.
+* Validate/iterate until all required data is migrated from the EC2 hosted Postgres to the RDS Postgres.
 
 **Create Replication Instance**
 
 * From the AWS Management Console, open the Database Migration Service dashboard.
-* From the left panel, select Replicaten instances
+* From the left panel, select Replication instances
 * Click on Create application instance
 * Fill out the wizard forms
 * Assign a name to the replication instance
@@ -244,7 +244,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Select the replication instance name you have created
 * Select Run test. 
 * Wait for the test status to show successful
-* If not, troubleshoot cause and proceed to next step
+* If not, troubleshoot cause before you proceed to next step
 
 **Create And Test The Targt DB Endpoint**
 
@@ -259,7 +259,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Select the replication instance name you have created
 * Select Run test
 * Wait for the test status to show successful
-* If not, troubleshoot cause and proceed to next step
+* If not, troubleshoot cause before you proceed to next step
 
 Once you you have successful endpoint tests, proceed to create the migration task
 
