@@ -88,6 +88,7 @@ ALTER USER postgres with encrypted password 'your_password';
 sudo systemctl restart postgresql.service
 ```
 ***Provision The Target RDS Postgres 12 Database***
+Follow the RDS database creation wizard. I have chosen the settings for convenince and to keep the guide short. In your AWS environment, your settings may vary according to your security, performance, and cost optimixation requirements.  
 * Login to AWS Management Console and proceeds to the RDS Dashboard.
 * Select Postgres
 * Select Template: Dev/Test
