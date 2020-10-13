@@ -145,6 +145,8 @@ Let's proceed to install pgAdmin.
 
 ***Load Test Data Into The Source Postgres DB***
 
+You can find detailed info about the sample data on this wiki page: https://wiki.postgresql.org/wiki/Sample_Databases
+
 * From the EC2 Postgres server, log into the psql command line utility
 ```bash
 sudo -u postgres psql template1
