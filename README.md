@@ -2,6 +2,8 @@
 
 ***ROUGH DRAFT***
 
+**TODO: Add screen captures and video**
+
 ***Overview of Guide***
 
 In this guide, I will deply the AWS Database Migration Service to migrate an EC2-hosted Postgres source database (or on-prem) to RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings will reflect that. Please ensure that the commands are updated to reflect your version of Postgres. 
