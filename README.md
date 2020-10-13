@@ -119,21 +119,21 @@ Follow the RDS database creation wizard. I have chosen the settings for convenin
 * Select Create and wait for the status to show the DB is Available.
 * Click the View credentials details button on the upper right to copy your DB credentials.   
 
-***Deploy pgAdmin
+***Deploy pgAdmin For Posgres Admininstration***
 
-pgAdmin is a popular GUI clinet for Postgres. You can pefrom various admin and development tasks with the help of this user firendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer command line tool, pgql will dp nicely too. 
+pgAdmin is a popular GUI clinet for Postgres. You can pefrom various admin and development tasks with the help of this user firendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer command line tool, the psql utlity is your goto tool. 
 
 For this section, we will need the following data ready:
 
 * Public IP of the EC2 instance hosting the source Postgres DB 
 * The endpoint for the target Postgres RDS DB
-* Access credentials for both DBs. 
-* Ensure that security groups attached to both DBs allow incoming traffic to and from the internet thru port 5432.
+* Access credentials for both DBs 
+* Ensure security groups attached to both DBs have inbound rules to allow incoming traffic thru port 5432. 
 
-Let's proceed to deploy pgAdmin. 
+Let's proceed to install pgAdmin. 
 
 * Download pgAdmin for your OS: https://www.pgadmin.org/
-* Install pgAdmin according to the OS instructions.
+* Install pgAdmin according to the instructions.
 * Create a New Server connection record for the source Postgres running on the EC2 instance, and verify connectivity.
 * Create a New Server connection record for the target Postgres in RDS, and verify connectivity.
 
