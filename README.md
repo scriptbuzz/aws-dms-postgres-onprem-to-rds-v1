@@ -257,7 +257,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 ![DMS EC2 endpoint test](assets/mbx-dms-endpoint03.png)
 
 
-**Create And Test The Target DB Endpoint**
+**Create And Test The Target DB RDS Endpoint**
 
 * From the Database Migration Service dashboard
 * From the left panel, select Endpoints
@@ -272,6 +272,10 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Select Run test
 * Wait for the test status to show successful
 * If not, troubleshoot cause before you proceed to next step
+
+![DMS RDS endpoint](assets/mbx-dms-endpoint02.png)
+
+![DMS RDS endpoint test](assets/mbx-dms-endpoint01.png)
 
 Once you you have successful endpoint tests, proceed to create the migration task
 
