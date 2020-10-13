@@ -22,8 +22,7 @@ This guide is made up of the following sections:
   * Run the DMS Migration Task
   * Verify table migration from source DB to target DB. 
   
-  
-  
+
 ***Deploy an EC2-hosted Postgres DB***
 
 * Login to the AWS Management Console 
