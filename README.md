@@ -211,6 +211,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * From the AWS Management Console, open the Database Migration Service dashboard.
 * From the left panel, select Replicaten instances
 * Click on Create application instance
+* Fill out the wizard forms
 * Assign a name to the replication instance
 * Instance class: dms.t2.medium
 * Engine version: 3.3.4
@@ -225,4 +226,21 @@ In this section, I will configure the DMS resources that will kick-off the datab
 
 **Create and test the source DB endpoint**
 
-* 
+* From the Database Migration Service dashboard
+* From the left panel, select Endpoints
+* Fill out the wizard forms
+* Assign a name to the Endpoint identifier
+* From the Source engine dropdown menu, select postgres
+* For Server name, provide the public IP address for the EC2 Postgres instance. 
+* Port: 5432
+* User name: postgres
+* Password: enter the password that you have specified earlier
+* Database name: mbxDB
+* Expand the Test endpoint connection 
+* Select the default VPC
+* Select the replication instance name you have created
+* Select Run test. 
+* Wait for the test status to show successful
+* If not, troubleshoot cause and proceed to next step
+
+
