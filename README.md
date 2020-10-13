@@ -308,9 +308,7 @@ Once you you have successful endpoint tests, proceed to create the migration tas
 ![DMS Success info](assets/mbx-dms-rep-instance-tasks.png)
 * From the Table statistics panel, scroll to verify that you have 67,788 rows loaded
 ![DMS Success stats](assets/mbx-dms-rep-instance-migration-stats.png)
-* Using pgAdmin, verify that the data is migrated to RDS. This video clip will show the final reasults of migrated data in RDS.  
-
-https://youtu.be/QHKhyzPUPaU
+* Using pgAdmin, verify that the data is migrated to RDS. This video clip will show the final reasults of migrated data in RDS.  https://youtu.be/QHKhyzPUPaU
 
 Thank you...
 
