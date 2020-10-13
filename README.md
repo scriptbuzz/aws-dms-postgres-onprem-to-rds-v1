@@ -145,7 +145,9 @@ Let's proceed to install pgAdmin.
 
 ***Load Test Data Into The Source Postgres DB***
 
-You can find detailed info about the sample data on this wiki page: https://wiki.postgresql.org/wiki/Sample_Databases
+You can find detailed info about the sample data on this wiki page: https://wiki.postgresql.org/wiki/Sample_Databases. 
+
+In this guide, I have downloaded the monthly csv file instead of the full dataset. https://www.gov.uk/government/statistical-data-sets/price-paid-data-downloads#current-month-august-2020-data. First, lets create the project database. 
 
 * From the EC2 Postgres server, log into the psql command line utility
 ```bash
