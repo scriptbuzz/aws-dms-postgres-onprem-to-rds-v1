@@ -208,6 +208,9 @@ In this section, I will configure the DMS resources that will kick-off the datab
 
 **Create Replication Instance**
 
+* From the AWS Management Console, open the Database Migration Service dashboard.
+* From the left panel, select Replicaten instances
+* Click on Create application instance
 * Assign a name to the replication instance
 * Instance class: dms.t2.medium
 * Engine version: 3.3.4
@@ -220,3 +223,6 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Click on Create
 * Wait for Status to change to Available
 
+**Create and test the source DB endpoint**
+
+* 
