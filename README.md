@@ -39,12 +39,14 @@ This guide is made up of the following sections:
 * For storage, assign 20 GB for good measures. This is more than enough for the test dataset
 * Assign a useful Name tag to the EC2 instance
 * Select Security Group with inbound rule for the Postgres port. Typically, it is port 5432. If you will be using SSH, also open port 22 
-•	Review your configuration and Launch the EC2 instance
-•	Wait for EC2 instance until it's "Running" with a status check of 2/2
-•	Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when configuring your server access as well as the DMS endpoints. 
-•	Connect to the EC2 instance using your favorite method. I prefer to use the AWS SSM Remote Session. 
+* Review your configuration and Launch the EC2 instance
+* Wait for EC2 instance until it's "Running" with a status check of 2/2
+* Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when configuring your server access as well as the DMS endpoints. 
+* Connect to the EC2 instance using your favorite method. I prefer to use the AWS SSM Remote Session. 
+
 Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12. PostgreSQL configuration files are stored in the /etc/postgresql/<version>/main directory. For example, if you install PostgreSQL 12, the configuration files are stored in the /etc/postgresql/12/main directory.
-* Run the following commands:
+
+* From the command prompt, enter the following commands:
 ```bash
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
