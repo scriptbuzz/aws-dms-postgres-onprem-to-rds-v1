@@ -1,6 +1,5 @@
 # aws-dms-postgres-onprem-to-rds
 
-***DRAFT***
 
 ***Overview of Guide***
 
