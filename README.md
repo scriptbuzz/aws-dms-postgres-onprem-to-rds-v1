@@ -1,7 +1,7 @@
 # aws-dms-postgres-onprem-to-rds
 
 
-***Overview of Guide***
+**Overview of Guide**
 
 In this guide, I will deploy an AWS Database Migration Service (DMS) pipeline to migrate an EC2-hosted Postgres source database (or on-prem) to an RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings in this guide will reflect the version number. Please ensure that the commands are updated to reflect your version of Postgres. 
 
@@ -13,7 +13,7 @@ When the migration is complete, a table hosted on the on-premise (EC2) Postgres 
 
 This video is an overview of the the working DMS pipeline that will be deployed in this guide: https://youtu.be/crQDJD6Dj7U
 
-***Database Migration Guide Outline***
+**Database Migration Guide Outline**
 
 This guide is made up of the following sections:
 
@@ -97,7 +97,7 @@ sudo systemctl restart postgresql.service
 ```
 Now it's time to provision the target RDS database that we wish to migrate to. 
 
-***Provision The Target RDS Postgres 12 Database***
+**Provision The Target Amazon RDS Postgres 12 Database**
 
 Follow the RDS database creation wizard. I have chosen the settings for convenience and to keep the guide short. In your AWS environment, your settings may vary according to your security, performance, and cost optimization requirements.  
 
@@ -124,7 +124,7 @@ Follow the RDS database creation wizard. I have chosen the settings for convenie
 * Select Create and wait for the status to show the DB is Available.
 * Click the View credentials details button on the upper right to copy your DB credentials.   
 
-***Deploy pgAdmin For Postgres Administration***
+**Deploy pgAdmin For Postgres Administration**
 
 pgAdmin is a popular GUI client for Postgres. You can perform various admin and development tasks with the help of this user friendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer command line tool, the psql utility is your goto tool. 
 
@@ -143,7 +143,7 @@ Let's proceed to install pgAdmin.
 * Create a New Server connection record for the target Postgres in RDS, and verify connectivity.
 
 
-***Load Test Data Into The Source Postgres DB***
+**Load Test Data Into The Source Postgres DB**
 
 You can find detailed info about the sample data on this wiki page: https://wiki.postgresql.org/wiki/Sample_Databases. 
 
@@ -191,7 +191,7 @@ CREATE TABLE land_registry_price_paid_uk(
 ```
 * You will now return to the OS command line.
 
-***Import land_registry_price_paid_uk CSV Data***
+**Import land_registry_price_paid_uk CSV Data**
 
 * I will use pgAdmin for the data import task because of the simplicity of the workflow, the psql command line tool can do the trick too. 
 * Find the mbxDB and expand it
@@ -203,7 +203,7 @@ CREATE TABLE land_registry_price_paid_uk(
 * Select the CVS file and wait for successful import
 * Verify data is uploaded using pgAdmin by viewing data rows from the land_registry_price_paid_uk table
 
-***Provision The Database Migration Service***
+**Provision The Database Migration Service**
 
 In this section, I will configure the DMS resources that will kick-off the database migration. The steps involved are as follows:
 
@@ -213,7 +213,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Create the Migration Task
 * Validate/iterate until all required data is migrated from the EC2 hosted Postgres to the RDS Postgres.
 
-**Create Replication Instance**
+***Create Replication Instance***
 
 * From the AWS Management Console, open the Database Migration Service dashboard.
 * From the left panel, select Replication instances
@@ -237,7 +237,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 * Click on Create
 * Wait for Status to change to Available
 
-**Create And Test The Source EC2 DB Endpoint**
+***Create And Test The Source EC2 DB Endpoint***
 
 * From the Database Migration Service dashboard
 * From the left panel, select Endpoints
@@ -263,7 +263,7 @@ In this section, I will configure the DMS resources that will kick-off the datab
 ![DMS EC2 endpoint test](assets/mbx-dms-endpoint03.png)
 
 
-**Create And Test The Target DB RDS Endpoint**
+***Create And Test The Target DB RDS Endpoint***
 
 * From the Database Migration Service dashboard
 * From the left panel, select Endpoints
@@ -285,7 +285,8 @@ In this section, I will configure the DMS resources that will kick-off the datab
 
 Once you you have successful endpoint tests, proceed to create the migration task
 
-**Create The Database Migration Task**
+***Create The Database Migration Task***
+
 * From the Database Migration Service dashboard
 * Select Database migration tasks
 * Select Create task
