@@ -11,6 +11,8 @@ This guide assumes a non-production Postgres workload and data running in a non-
 
 When the migration is complete, a table hosted on the on-premise (EC2) Postgres database will be migrated to an Amazon RDS Postgres database.
 
+https://youtu.be/crQDJD6Dj7U
+
 ***Database Migration Guide Outline***
 
 This guide is made up of the following sections:
