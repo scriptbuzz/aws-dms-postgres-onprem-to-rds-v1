@@ -10,6 +10,7 @@ In this guide, I will deploy an AWS Database Migration Service (DMS) pipeline to
 This guide assumes a non-production Postgres workload and data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security and compliance. To simplify the guide and keep it to a managable length, workloads are provisioned with public endpoints, no encryption unless enabled by default, and basic authintication. When possible, I have left the default values unchanged during the creation of cloud resources. 
 
 **Resourcing Database Migration Efforts**
+
 If you are working in a production environment, it's vital that an expert Postgres DBA is involved to help resolve Postgres specific technical issues such as authentication and validation. And since database migration projects typically involve migrating business data, having a domain subject matter expert is equally important to help answer data specific question such as which data to migrate, what data transformations are needed, what SLAs are needed to meet the business objectives, what are the database migration acceptance tests that need to be applied at the end of the migration process, etc.  
 
 When the migration is complete, a table hosted on the on-premise (EC2) Postgres database will be migrated to an Amazon RDS Postgres database.
