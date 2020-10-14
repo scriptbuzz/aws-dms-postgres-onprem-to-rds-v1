@@ -142,6 +142,8 @@ Let's proceed to install pgAdmin.
 * Create a New Server connection record for the source Postgres running on the EC2 instance, and verify connectivity.
 * Create a New Server connection record for the target Postgres in RDS, and verify connectivity.
 
+![AWS pgAdmin Create Server](assets/mbx-dms-pgadmin-create-server.png)
+![AWS pgAdmin DB Connection](assets/mbx-dms-pgadmin-connect.png)
 
 **Load Test Data Into The Source Postgres DB**
 
@@ -305,6 +307,7 @@ Once you you have successful endpoint tests, proceed to create the migration tas
 * For Schema name, enter %
 * For Table name, enter %
 * Select Create task
+![AWS DMS Mapping Rules](assets/mbx-dms-mapping-rules.png)
 * If the Task did not start, from the Actions dropdown meny, select Restart/Resume
 * In the Summary panel, wait for the status to show Load complete
 ![DMS Success info](assets/mbx-dms-rep-instance-tasks.png)
