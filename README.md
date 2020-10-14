@@ -1,4 +1,4 @@
-# aws-dms-postgres-onprem-to-rds
+# Migrating an On-premise Postgres 12 Database to an Amazon RDS Postgres 12 database using the AWS Database Migration Service
 
 
 **Overview of Guide**
