@@ -143,7 +143,9 @@ Let's proceed to install pgAdmin.
 * Create a New Server connection record for the target Postgres in RDS, and verify connectivity.
 
 ![AWS pgAdmin Create Server](assets/mbx-dms-pgadmin-create-server.png)
+
 ![AWS pgAdmin DB Connection](assets/mbx-dms-pgadmin-connect.png)
+
 
 **Load Test Data Into The Source Postgres DB**
 
@@ -307,13 +309,19 @@ Once you you have successful endpoint tests, proceed to create the migration tas
 * For Schema name, enter %
 * For Table name, enter %
 * Select Create task
+
 ![AWS DMS Mapping Rules](assets/mbx-dms-mapping-rules.png)
+
 * If the Task did not start, from the Actions dropdown meny, select Restart/Resume
 * In the Summary panel, wait for the status to show Load complete
+
 ![DMS Success info](assets/mbx-dms-rep-instance-tasks.png)
+
 * From the Table statistics panel, scroll to verify that you have 67,788 rows loaded
+
 ![DMS Success stats](assets/mbx-dms-rep-instance-migration-stats.png)
-* Using pgAdmin, verify that the data is migrated to RDS. This video clip will show the final reasults of migrated data in RDS.  https://youtu.be/QHKhyzPUPaU
+
+* Using pgAdmin, verify that the data is migrated to RDS. This video clip will show the final reasults of migrated data in RDS: https://youtu.be/QHKhyzPUPaU
 
 Thank you...
 
