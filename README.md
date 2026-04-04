@@ -61,37 +61,23 @@ From the command prompt, enter the following commands to install Postgres 12:
 
 ```bash
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
 sudo apt-get update
 sudo apt-get -y install postgresql-12
 ```
 
-To allow remote connection to my PostgreSQL DB, I will modify the `postgresql.conf` file. Please update the command path to reflect your Postgres version number:
+To allow remote connection to my PostgreSQL DB, we will modify the `postgresql.conf` file using `sed`. This automates replacing `#listen_addresses = 'localhost'` with `listen_addresses = '*'`. Please update the command path to reflect your Postgres version number if you install a different version:
 
 ```bash
-sudo vim /etc/postgresql/12/main/postgresql.conf
+sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/12/main/postgresql.conf
 ```
 
-Locate the line `#listen_addresses = 'localhost'` and change/uncomment to:
-
-```text
-listen_addresses = '*'
-```
-
-Save & exit the file. 
-
-Enable TCP/IP connections and use the `md5` method for client authentication for the `postgres` user. Open the file `pg_hba.conf`:
+Enable TCP/IP connections and use the `md5` method for client authentication for the `postgres` user. We will append the required rules directly to `pg_hba.conf`:
 
 ```bash
-sudo vim /etc/postgresql/12/main/pg_hba.conf
-```
-
-Add the following lines under the IPv4 local connections area, then save & exit the file. 
-
-```text
-local   all    postgres       md5
-host    all    all            0.0.0.0/0                       md5
-host    all    all            ::/0                            md5
+echo "local   all    postgres       md5" | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
+echo "host    all    all            0.0.0.0/0                       md5" | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
+echo "host    all    all            ::/0                            md5" | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
 ```
 
 To set a password for the default `postgres` user, run the following command at a terminal prompt to connect to the default PostgreSQL `template1` database:
