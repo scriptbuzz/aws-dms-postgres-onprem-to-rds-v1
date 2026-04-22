@@ -1,63 +1,105 @@
-# Migrating an On-premise Postgres 12 Database to an Amazon RDS Postgres 12 database using the AWS Database Migration Service
+<div align="center">
 
-## Introduction
-Database migrations can often be complex and challenging, especially when moving from self-managed environments to fully managed cloud services. This guide demonstrates how to deploy an AWS Database Migration Service (DMS) pipeline to seamlessly migrate a self-hosted PostgreSQL database to an Amazon RDS target database. Whether you are lifting and shifting an on-premises workload or a cloud-hosted baseline database, this tutorial provides a comprehensive walkthrough.
+# Migrating On-Premises PostgreSQL to Amazon RDS
+### Using AWS Database Migration Service (DMS)
 
-## Technology Stack and Tools
-*   **Source Database Environment:** A self-hosted Postgres 12 database running on an Amazon EC2 instance (Ubuntu 20.04), simulating an on-premise or unmanaged database environment.
-*   **Target Database Environment:** Amazon Relational Database Service (RDS) running Postgres 12, a fully managed, highly available database engine.
-*   **Migration Engine:** AWS Database Migration Service (DMS), a robust tool designed to migrate relational databases, data warehouses, NoSQL databases, and other types of data stores securely and efficiently with minimal downtime.
-*   **Client Tool:** pgAdmin, a widely-used graphical user interface (GUI) supporting administration and development for Postgres.
+[![AWS DMS](https://img.shields.io/badge/AWS-Database_Migration_Service-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](https://aws.amazon.com/dms/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Amazon RDS](https://img.shields.io/badge/Amazon-RDS-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)](https://aws.amazon.com/rds/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![EC2](https://img.shields.io/badge/Amazon-EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)](https://aws.amazon.com/ec2/)
 
-## Overview of Guide
-In this guide, I will deploy an AWS Database Migration Service (DMS) pipeline to migrate an EC2-hosted Postgres source database (or on-prem) to an RDS Postgres target database. I will be working with a Postgres 12 DB so the commands and settings in this guide will reflect the version number. Please ensure that the commands are updated to reflect your version of Postgres. 
+---
 
-![AWS DMS](assets/mbx-dms-diagram.png)
+*A step-by-step guide to migrating a self-hosted PostgreSQL 12 database to Amazon RDS using AWS DMS — with minimal downtime.*
 
-This guide assumes a non-production Postgres workload and data running in a non-production AWS environment. If you are working in a production environment, please follow best practices for cloud security and compliance. To simplify the guide and keep it to a manageable length, workloads are provisioned with public endpoints, no encryption unless enabled by default, and basic authentication. When possible, I have left the default values unchanged during the creation of cloud resources.  
+[Overview](#overview) · [Prerequisites](#prerequisites) · [Architecture](#architecture) · [Guide](#guide-outline) · [References](#references)
 
-When the migration is complete, a table hosted on the on-premise (EC2) Postgres database will be migrated to an Amazon RDS Postgres database.
+</div>
 
-This video is an overview of the working DMS pipeline that will be deployed in this guide: https://youtu.be/crQDJD6Dj7U
+---
 
-## Database Migration Guide Outline
+## Overview
 
-This guide is made up of the following sections:
+Database migrations can be complex, especially when moving from self-managed environments to fully managed cloud services. This guide walks through deploying a complete **AWS Database Migration Service (DMS)** pipeline to migrate a self-hosted PostgreSQL database on Amazon EC2 (simulating on-premises) to an Amazon RDS PostgreSQL target.
 
-*   Deploy an EC2-hosted Postgres DB
-*   Deploy an RDS Postgres DB
-*   Install pgAdmin, a popular GUI client for Postgres DB
-*   Import test data into the EC2 Postgres DB
-*   Deploy the Database Migration Service (DMS)
-    *   Create the DMS Replication Instance
-    *   Create and Test The DMS Source EC2 Endpoint
-    *   Create and Test The DMS Target RDS Endpoint
-    *   Create a DMS Migration Task
-    *   Run the DMS Migration Task
-    *   Verify table data migration from source DB to target DB.
+> **Video walkthrough:** Watch the complete DMS pipeline in action → [youtu.be/crQDJD6Dj7U](https://youtu.be/crQDJD6Dj7U)
 
-## Deploy an EC2-hosted Postgres DB
+> **Note:** This guide targets non-production workloads. Resources are provisioned with public endpoints and basic authentication to keep the walkthrough concise. For production environments, apply appropriate security hardening, VPC peering, SSL/TLS, and IAM-based authentication.
 
-1.  Login to the AWS Management Console.
-2.  Set your AWS Region.
-3.  Navigate to the EC2 dashboard.
-4.  Launch a new EC2 instance using the Amazon-managed Ubuntu 20.04 AMI.
-5.  Select EC2 Instance Type `m5a.large`.
-6.  Select the default VPC.
-7.  Select desired subnet and Availability Zone.
-8.  Enable Auto-assign Public IP. Later, attach an Elastic IP so you don't end up with a different public IP address every time you restart your EC2 instance. 
-9.  *Optional:* Attach an IAM SSM Role (to allow remote access into the EC2 without the need for SSH).
-10. For storage, assign 20 GB for good measure. This is more than enough for the test dataset.
-11. Assign a tag to the EC2 instance.
-12. Select a Security Group with an inbound rule for the Postgres port. Typically, the port is `5432`. If you will be using SSH, also open port `22`.
-13. Review your configuration and Launch the EC2 instance.
-14. Wait for the EC2 instance until you see "Running" with a status check of 2/2.
-15. Attach an Elastic Public IP Address. Note the public IP address of your EC2 instance. You will use this IP when you configure your server access as well as the DMS endpoints. 
-16. Connect to the EC2 instance using your favorite method. I prefer to use the AWS Systems Manager (SSM) Session Manager. 
+---
 
-Now that my EC2 instance is up and running and I am at the command prompt, I will install and configure Postgres 12. PostgreSQL configuration files are stored in the `/etc/postgresql/<version>/main` directory. For example, if you plan to install PostgreSQL 12, the configuration files are stored in the `/etc/postgresql/12/main` directory.
+## Technology Stack
 
-From the command prompt, enter the following commands to install Postgres 12:
+| Component | Technology | Details |
+|-----------|-----------|---------|
+| **Source DB** | PostgreSQL 12 on EC2 | Ubuntu 20.04, simulates on-prem |
+| **Target DB** | Amazon RDS PostgreSQL 12 | Fully managed, HA-capable |
+| **Migration Engine** | AWS Database Migration Service | Minimal-downtime replication |
+| **Client Tool** | pgAdmin | GUI for Postgres administration |
+
+---
+
+## Prerequisites
+
+Before starting, make sure you have:
+
+- [ ] An active **AWS account** with IAM permissions for EC2, RDS, and DMS
+- [ ] **pgAdmin** installed on your local machine ([download here](https://www.pgadmin.org/))
+- [ ] Familiarity with the AWS Management Console
+- [ ] A test CSV dataset to migrate (UK Land Registry data used in this guide)
+
+---
+
+## Architecture
+
+<div align="center">
+  <img src="assets/mbx-dms-diagram.png" alt="AWS DMS Architecture Diagram" width="85%"/>
+  <br/>
+  <em>End-to-end migration architecture: EC2-hosted PostgreSQL → AWS DMS → Amazon RDS PostgreSQL</em>
+</div>
+
+---
+
+## Guide Outline
+
+This guide is divided into the following sections:
+
+1. [Deploy an EC2-Hosted PostgreSQL DB](#1-deploy-an-ec2-hosted-postgresql-db)
+2. [Provision the Target Amazon RDS PostgreSQL DB](#2-provision-the-target-amazon-rds-postgresql-db)
+3. [Set Up pgAdmin](#3-set-up-pgadmin)
+4. [Load Test Data Into the Source DB](#4-load-test-data-into-the-source-db)
+5. [Provision AWS Database Migration Service](#5-provision-aws-database-migration-service)
+   - [Create a Replication Instance](#51-create-a-replication-instance)
+   - [Create & Test the Source EC2 Endpoint](#52-create--test-the-source-ec2-endpoint)
+   - [Create & Test the Target RDS Endpoint](#53-create--test-the-target-rds-endpoint)
+   - [Create the Migration Task](#54-create-the-migration-task)
+6. [Resourcing Considerations](#6-resourcing-considerations)
+
+---
+
+## 1. Deploy an EC2-Hosted PostgreSQL DB
+
+**Launch the EC2 Instance**
+
+1. Log in to the **AWS Management Console** and set your AWS Region.
+2. Navigate to **EC2 → Launch Instance**.
+3. Select the **Ubuntu 20.04 LTS** AMI (Amazon-managed).
+4. Choose instance type: `m5a.large`.
+5. Use the **default VPC**, select a subnet and Availability Zone.
+6. **Enable Auto-assign Public IP** — then attach an Elastic IP after launch to retain a stable address.
+7. *(Optional)* Attach an IAM SSM role to allow Session Manager access (no SSH key needed).
+8. Allocate **20 GB** of storage.
+9. Add a tag to the instance (e.g., `Name: postgres-source`).
+10. Attach a Security Group with:
+    - Inbound: `TCP 5432` (PostgreSQL)
+    - Inbound: `TCP 22` (SSH, if needed)
+11. Launch and wait for **2/2 status checks**.
+12. Attach an **Elastic IP** and note it — you'll reference it in DMS endpoint configuration.
+
+**Install PostgreSQL 12**
+
+Connect to the EC2 instance (via SSM or SSH) and run:
 
 ```bash
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
@@ -66,300 +108,322 @@ sudo apt-get update
 sudo apt-get -y install postgresql-12
 ```
 
-To allow remote connection to my PostgreSQL DB, we will modify the `postgresql.conf` file using `sed`. This automates replacing `#listen_addresses = 'localhost'` with `listen_addresses = '*'`. Please update the command path to reflect your Postgres version number if you install a different version:
+**Configure Remote Access**
+
+Allow remote connections by updating `postgresql.conf`:
 
 ```bash
 sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/12/main/postgresql.conf
 ```
 
-Enable TCP/IP connections and use the `md5` method for client authentication for the `postgres` user. We will append the required rules directly to `pg_hba.conf`:
+Append authentication rules to `pg_hba.conf`:
 
 ```bash
-echo "local   all    postgres       md5" | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
-echo "host    all    all            0.0.0.0/0                       md5" | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
-echo "host    all    all            ::/0                            md5" | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
+echo "local   all    postgres       md5"                  | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
+echo "host    all    all            0.0.0.0/0    md5"     | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
+echo "host    all    all            ::/0         md5"     | sudo tee -a /etc/postgresql/12/main/pg_hba.conf
 ```
 
-To set a password for the default `postgres` user, run the following command at a terminal prompt to connect to the default PostgreSQL `template1` database:
+**Set the postgres User Password**
 
 ```bash
 sudo -u postgres psql template1
 ```
 
-From the SQL prompt, enter the command:
+At the SQL prompt:
 
 ```sql
-ALTER USER postgres with encrypted password 'your_password';
-```
-
-Quit the SQL prompt with the command: 
-
-```sql
+ALTER USER postgres WITH ENCRYPTED PASSWORD 'your_password';
 \q
 ```
 
-Restart Postgres for the changes to take effect:
+**Restart PostgreSQL** to apply changes:
 
 ```bash
 sudo systemctl restart postgresql.service
 ```
 
-Now it's time to provision the target RDS database that we wish to migrate to. 
+---
 
-## Provision The Target Amazon RDS Postgres 12 Database
+## 2. Provision the Target Amazon RDS PostgreSQL DB
 
-Follow the RDS database creation wizard. I have chosen the settings for convenience and to keep the guide short. In your AWS environment, your settings may vary according to your security, performance, and cost optimization requirements.  
+In the **RDS Dashboard**, use the following settings as a baseline:
 
-1.  Login to AWS Management Console and proceed to the RDS Dashboard.
-2.  Select **PostgreSQL**.
-3.  Select Template: **Dev/Test**.
-4.  Assign a DB instance identifier/name.
-5.  Set Master username: `postgres`.
-6.  Assign a Master password.
-7.  Set DB instance size: Select standard class / `db.m5.large`.
-8.  Set Storage: 40GB.
-9.  Storage autoscaling: Disable/uncheck.
-10. Multi-AZ deployment: Check **Do not create a standby instance**. 
-11. Connectivity: Select a VPC. The default VPC will work. 
-12. Subnet group: Select from available subnets. 
-13. Public access: Yes.
-14. VPC security group: Select the default security group as well as a security group with an inbound rule that opens up the database port (in this case port `5432`).
-15. Availability Zone: No preference (or specify one e.g., az1).
-16. Database port: `5432`.
-17. Database authentication: Password authentication.
-18. Database options: Assign an initial database name.
-19. DB parameter group: select the default or your customized option group.
-20. For the remaining options, I have unchecked them but feel free to enable the options that you need for your testing purposes. 
-21. Select **Create database** and wait for the status to show the DB is **Available**.
-22. Click the **View credentials details** button on the upper right to copy your DB credentials and endpoint.
+| Setting | Value |
+|---------|-------|
+| Engine | PostgreSQL 12 |
+| Template | Dev/Test |
+| Instance class | `db.m5.large` |
+| Storage | 40 GB (autoscaling disabled) |
+| Multi-AZ | Disabled (no standby) |
+| Public access | Yes |
+| Port | 5432 |
+| Authentication | Password |
 
-## Deploy pgAdmin For Postgres Administration
+1. Log in → **RDS Dashboard → Create database**.
+2. Select **PostgreSQL** → Template: **Dev/Test**.
+3. Set a DB identifier, master username (`postgres`), and a strong password.
+4. Configure instance size, storage, VPC, and subnet group as above.
+5. Set **Public access: Yes** and attach a Security Group with inbound `TCP 5432`.
+6. Set an **initial database name** under Database options.
+7. Click **Create database** and wait for status: **Available**.
+8. Use **View credentials details** to copy your endpoint and credentials.
 
-pgAdmin is a popular GUI client for Postgres. You can perform various admin and development tasks with the help of this user-friendly tool. I will use it to verify connectivity to both source and target databases as well as import test data and verify migration of data from source to target DB. If you prefer a command line tool, the `psql` utility is a great alternative. 
+---
 
-For this section, we will need the following data ready:
+## 3. Set Up pgAdmin
 
-*   Public IP of the EC2 instance hosting the source Postgres DB.
-*   The endpoint for the target Postgres RDS DB.
-*   Access credentials for both DBs.
-*   Ensure security groups attached to both DBs have inbound rules to allow incoming traffic thru port `5432`. 
+**Required information before proceeding:**
 
-Let's proceed to install pgAdmin. 
+- Public IP of the EC2 source PostgreSQL instance
+- RDS endpoint for the target PostgreSQL DB
+- Credentials for both databases
+- Security groups must allow inbound `TCP 5432` for both DBs
 
-1.  Download pgAdmin for your OS from: https://www.pgadmin.org/
-2.  Install pgAdmin according to the instructions.
-3.  Create a New Server connection record for the source Postgres running on the EC2 instance, and verify connectivity.
-4.  Create a New Server connection record for the target Postgres in RDS, and verify connectivity.
+**Steps:**
 
-![AWS pgAdmin Create Server](assets/mbx-dms-pgadmin-create-server.png)
+1. Download and install [pgAdmin](https://www.pgadmin.org/) for your OS.
+2. Add a **New Server** for the EC2 source DB and verify connectivity.
+3. Add a **New Server** for the RDS target DB and verify connectivity.
 
-![AWS pgAdmin DB Connection](assets/mbx-dms-pgadmin-connect.png)
+<div align="center">
+  <img src="assets/mbx-dms-pgadmin-create-server.png" alt="pgAdmin Create Server Dialog" width="70%"/>
+  <br/><em>Creating a new server connection in pgAdmin</em>
+</div>
 
+<br/>
 
-## Load Test Data Into The Source Postgres DB
+<div align="center">
+  <img src="assets/mbx-dms-pgadmin-connect.png" alt="pgAdmin Connection Success" width="70%"/>
+  <br/><em>Successful connection to the PostgreSQL database</em>
+</div>
 
-You can find detailed information about PostgreSQL sample datasets on this wiki page: https://wiki.postgresql.org/wiki/Sample_Databases. 
+---
 
-In this guide, I have downloaded the monthly csv file instead of the full dataset. https://www.gov.uk/government/statistical-data-sets/price-paid-data-downloads#current-month-august-2020-data. First, let's create the project database. 
+## 4. Load Test Data Into the Source DB
 
-From the EC2 Postgres server, log into the `psql` command line utility:
+This guide uses the **UK Land Registry Price Paid** dataset. You can find PostgreSQL sample datasets at the [PostgreSQL wiki](https://wiki.postgresql.org/wiki/Sample_Databases).
+
+**Create the database and table structure:**
 
 ```bash
 sudo -u postgres psql template1
 ```
 
-From the `psql` command line, list key databases:
-
 ```sql
+-- List databases
 \l
-```
 
-Create the test database to be migrated. I am assigning the name `mbxDB` to my database but you can assign a different name. 
-
-```sql
-create database mbxDB;
-```
-
-Make `mbxDB` active:
-
-```sql
+-- Create and switch to the test database
+CREATE DATABASE mbxDB;
 \c mbxDB
-```
 
-Create the table structure for `land_registry_price_paid_uk`:
-
-```sql
-CREATE TABLE land_registry_price_paid_uk(
-  transaction uuid,
-  price numeric,
-  transfer_date date,
-  postcode text,
-  property_type char(1),
-  newly_built boolean,
-  duration char(1),
-  paon text,
-  saon text,
-  street text,
-  locality text,
-  city text,
-  district text,
-  county text,
+-- Create the target table
+CREATE TABLE land_registry_price_paid_uk (
+  transaction      uuid,
+  price            numeric,
+  transfer_date    date,
+  postcode         text,
+  property_type    char(1),
+  newly_built      boolean,
+  duration         char(1),
+  paon             text,
+  saon             text,
+  street           text,
+  locality         text,
+  city             text,
+  district         text,
+  county           text,
   ppd_category_type char(1),
-  record_status char(1)
+  record_status    char(1)
 );
-```
 
-Quit `psql`:
-
-```sql
 \q
 ```
 
-You will now return to the OS command line.
+**Import the CSV using pgAdmin:**
 
-## Import land_registry_price_paid_uk CSV Data
+1. In the Object Browser, expand `mbxDB` → `Tables`.
+2. Right-click `land_registry_price_paid_uk` → **Import/Export Data**.
+3. Switch to **Import**, select your downloaded CSV file.
+4. Click **OK** and wait for the success message.
+5. Query the table to verify the imported rows.
 
-I will use pgAdmin for the data import task because of the simplicity of the workflow. The `psql` command line tool can do the trick too via the `\copy` command. 
+---
 
-1.  Find the `mbxDB` and expand it in the Object Browser.
-2.  Find and select the `land_registry_price_paid_uk` table. 
-3.  Right-click on the table `land_registry_price_paid_uk`.
-4.  Select **Import/Export Data** from the menu.
-5.  In the dialog box, select **Import** from the Export/Import slider.
-6.  Select the CSV file that you downloaded earlier from your local drive. 
-7.  Click **OK** and wait for a successful import message.
-8.  Verify data is uploaded using pgAdmin by querying data rows from the `land_registry_price_paid_uk` table.
+## 5. Provision AWS Database Migration Service
 
-## Provision The Database Migration Service
+### 5.1 Create a Replication Instance
 
-In this section, I will configure the DMS resources that will kick-off the database migration. The steps involved are as follows:
+1. Open the **DMS Dashboard** → **Replication instances** → **Create replication instance**.
+2. Configure:
+   - **Name:** assign a meaningful name
+   - **Instance class:** `dms.t2.medium`
+   - **Engine version:** latest stable (e.g., 3.4.x)
+   - **Storage:** 50 GiB
+   - **VPC:** Default
+   - **Multi-AZ:** Disabled
+   - **Publicly accessible:** Yes
 
-*   Create a Replication Instance
-*   Create and test the source DB endpoint
-*   Create and test the target DB endpoint
-*   Create the Migration Task
-*   Validate/iterate until all required data is migrated from the EC2-hosted Postgres to the RDS Postgres.
+<div align="center">
+  <img src="assets/mbx-dms-rep-instance01.png" alt="DMS Replication Instance Configuration Part 1" width="70%"/>
+</div>
+<br/>
+<div align="center">
+  <img src="assets/mbx-dms-rep-instance02.png" alt="DMS Replication Instance Configuration Part 2" width="70%"/>
+</div>
 
-### Create Replication Instance
+3. Accept defaults for maintenance and advanced settings.
+4. Click **Create** and wait for status: **Available**.
 
-1.  From the AWS Management Console, open the Database Migration Service dashboard.
-2.  From the left navigation pane, select **Replication instances**.
-3.  Click on **Create replication instance**.
-4.  Fill out the wizard forms:
-    *   Assign a name to the replication instance. 
-    *   Instance class: `dms.t2.medium` (or equivalent suitable for testing)
-    *   Engine version: *Select latest stable version* (e.g. 3.4.x)
-    *   Allocated storage (GiB): `50` (default)
-  
-![DMS Replication part01 endpoint](assets/mbx-dms-rep-instance01.png)
+---
 
-5.  VPC: Default
-6.  Multi-AZ: uncheck/deselect
-7.  Publicly accessible: check/select
-8.  Advanced security and network configuration: accept defaults
+### 5.2 Create & Test the Source EC2 Endpoint
 
-![DMS Replication part02 endpoint](assets/mbx-dms-rep-instance02.png)
+1. **DMS Dashboard → Endpoints → Create endpoint → Source endpoint**
+2. Fill in:
 
-9.  Maintenance: accept defaults
-10. Click on **Create**.
-11. Wait for the Status to change to **Available**.
+   | Field | Value |
+   |-------|-------|
+   | Endpoint identifier | `mbx-postgres-ec2-source` |
+   | Source engine | PostgreSQL |
+   | Server name | EC2 Elastic IP address |
+   | Port | `5432` |
+   | Username | `postgres` |
+   | Password | your EC2 postgres password |
+   | Database name | `mbxDB` |
 
-### Create And Test The Source EC2 DB Endpoint
+3. Expand **Test endpoint connection**, select your replication instance, and click **Run test**.
+4. Wait for status: **Successful**. If it fails, check your Security Group inbound rules for port 5432.
 
-1.  From the Database Migration Service dashboard, select **Endpoints** from the left panel.
-2.  Select **Create endpoint**.
-3.  Select **Source endpoint**.
-4.  Fill out the wizard forms:
-    *   Assign a name to the Endpoint identifier. Ex: `mbx-postgres-ec2-source`
-    *   From the Source engine dropdown menu, select `PostgreSQL`.
-    *   For Server name, provide the public IP address for the EC2 Postgres instance. 
-    *   Port: `5432`
-    *   User name: `postgres`
-    *   Password: enter the password that you specified earlier.
-    *   Database name: `mbxDB`
-5.  Expand the **Test endpoint connection** section. 
-    *   Select the default VPC.
-    *   Select the replication instance name you have created.
-    *   Select **Run test**.
-6.  Wait for the test status to show **successful**.
-7.  If not, troubleshoot the cause (e.g., Security Group rules blocking port 5432) before you proceed to the next step.
+<div align="center">
+  <img src="assets/mbx-dms-endpoint04.png" alt="DMS EC2 Source Endpoint" width="70%"/>
+</div>
+<br/>
+<div align="center">
+  <img src="assets/mbx-dms-endpoint03.png" alt="DMS EC2 Endpoint Connection Test" width="70%"/>
+</div>
 
-![DMS EC2 endpoint](assets/mbx-dms-endpoint04.png)
+---
 
-![DMS EC2 endpoint test](assets/mbx-dms-endpoint03.png)
+### 5.3 Create & Test the Target RDS Endpoint
 
+1. **DMS Dashboard → Endpoints → Create endpoint → Target endpoint**
+2. Fill in:
 
-### Create And Test The Target DB RDS Endpoint
+   | Field | Value |
+   |-------|-------|
+   | Endpoint identifier | `mbx-target-postgres-rds` |
+   | Select RDS DB instance | ✅ Checked |
+   | RDS instance | Select from dropdown |
+   | Password | your RDS master password |
 
-1.  From the Database Migration Service dashboard, select **Endpoints** from the left panel.
-2.  Select **Create endpoint**.
-3.  Select **Target endpoint**. 
-4.  Assign a name to the Endpoint identifier. Ex: `mbx-target-postgres-rds`
-5.  Check **Select RDS DB instance**.
-6.  From the dropdown menu, select the RDS Postgres DB you have created earlier.
-7.  The remaining fields will be filled out automatically based on your RDS database selection, except the password which you will need to provide.
-8.  Expand the **Test endpoint connection** section. 
-    *   Select the default VPC.
-    *   Select the replication instance name you have created.
-    *   Select **Run test**.
-9.  Wait for the test status to show **successful**.
-10. If not, troubleshoot the cause before you proceed to the next step.
+3. Expand **Test endpoint connection**, select your replication instance, and click **Run test**.
+4. Wait for status: **Successful**.
 
-![DMS RDS endpoint](assets/mbx-dms-endpoint02.png)
+<div align="center">
+  <img src="assets/mbx-dms-endpoint02.png" alt="DMS RDS Target Endpoint" width="70%"/>
+</div>
+<br/>
+<div align="center">
+  <img src="assets/mbx-dms-endpoint01.png" alt="DMS RDS Endpoint Connection Test" width="70%"/>
+</div>
 
-![DMS RDS endpoint test](assets/mbx-dms-endpoint01.png)
+---
 
-Once you have successful endpoint tests, proceed to create the migration task.
+### 5.4 Create the Migration Task
 
-### Create The Database Migration Task
+1. **DMS Dashboard → Database migration tasks → Create task**
+2. Configure:
 
-1.  From the Database Migration Service dashboard, select **Database migration tasks**.
-2.  Select **Create task**.
-3.  Enter a name for Task identifier. Ex: `mbx-postgres-migration-task`
-4.  From the Replication instance dropdown menu, select the replication instance you have created earlier.
-5.  From the Source database endpoint dropdown, select the source EC2 endpoint.
-6.  From the Target database endpoint dropdown, select the target RDS endpoint.
-7.  From Migration type, select **Migrate existing data**.
-8.  In the Task settings panel > Editing mode, select **Wizard**.
-9.  Select **Drop tables on target** (default).
-10. Select **Limited LOB mode** (default).
-11. For Maximum LOB size (KB), keep the `32` value. 
-12. Check **Enable CloudWatch logs**.
-13. In the Table mappings panel > Editing mode, select **Wizard**.
-14. Expand **Selection rules**.
-    *   For Schema name, enter `%`
-    *   For Table name, enter `%`
-15. Select **Create task**.
+   | Field | Value |
+   |-------|-------|
+   | Task identifier | `mbx-postgres-migration-task` |
+   | Replication instance | your replication instance |
+   | Source endpoint | `mbx-postgres-ec2-source` |
+   | Target endpoint | `mbx-target-postgres-rds` |
+   | Migration type | Migrate existing data |
+   | Editing mode (task settings) | Wizard |
+   | Target table prep | Drop tables on target |
+   | LOB mode | Limited LOB mode |
+   | Max LOB size | 32 KB |
+   | CloudWatch logs | ✅ Enable |
 
-![AWS DMS Mapping Rules](assets/mbx-dms-mapping-rules.png)
+3. Under **Table mappings → Selection rules**:
+   - Schema name: `%`
+   - Table name: `%`
+4. Click **Create task**.
+5. If the task doesn't start automatically: **Actions → Restart/Resume**.
 
-16. If the Task did not start automatically, select it, click on the **Actions** dropdown menu, and select **Restart/Resume**.
-17. In the Summary panel, wait for the status to show **Load complete**.
+<div align="center">
+  <img src="assets/mbx-dms-mapping-rules.png" alt="DMS Table Mapping Rules" width="70%"/>
+</div>
 
-![DMS Success info](assets/mbx-dms-rep-instance-tasks.png)
+6. In the **Summary panel**, wait for status: **Load complete**.
 
-18. From the Table statistics panel, scroll to verify that you have `67,788` rows loaded (or the number of rows matching your dataset).
+<div align="center">
+  <img src="assets/mbx-dms-rep-instance-tasks.png" alt="DMS Task Load Complete" width="70%"/>
+</div>
 
-![DMS Success stats](assets/mbx-dms-rep-instance-migration-stats.png)
+7. In the **Table statistics panel**, verify the row count (e.g., `67,788` rows for the sample dataset).
 
-19. Using pgAdmin, connect to your RDS Target DB and verify that the data has successfully migrated there. This video clip will show the final results of migrated data in RDS: https://youtu.be/QHKhyzPUPaU
+<div align="center">
+  <img src="assets/mbx-dms-rep-instance-migration-stats.png" alt="DMS Migration Statistics" width="70%"/>
+</div>
 
-## Resourcing Database Migration Efforts
+8. Connect to your **RDS target DB** via pgAdmin and confirm the data has migrated successfully.
 
-If you are working in a production environment, it's vital that an expert Postgres DBA is involved to help resolve Postgres-specific technical issues such as authentication and validation. And since database migration projects typically involve migrating business data, having a domain subject matter expert is equally important to help answer data-specific questions such as:
-*   Which data to migrate?
-*   What data transformations are needed?
-*   What SLAs are needed to meet the business objectives?
-*   What are the database migration acceptance tests that need to be applied at the end of the migration process?
+> **Video — Final Results:** See the migrated data in RDS → [youtu.be/QHKhyzPUPaU](https://youtu.be/QHKhyzPUPaU)
+
+---
+
+## 6. Resourcing Considerations
+
+For **production** database migrations, involve the right stakeholders early:
+
+| Role | Responsibility |
+|------|---------------|
+| **Postgres DBA** | Authentication, performance tuning, replication validation |
+| **Domain SME** | Identify which data to migrate, define acceptance criteria |
+| **Cloud Architect** | Network topology, security, cost optimization |
+| **Project Owner** | SLAs, migration window, rollback plan |
+
+Key questions to answer before any production migration:
+
+- Which schemas/tables need to be migrated?
+- What data transformations or type mappings are required?
+- What are the SLA requirements (RTO/RPO)?
+- What acceptance tests confirm a successful migration?
+
+---
 
 ## Summary
-By completing this guide, you have successfully set up an end-to-end database migration workflow using AWS Database Migration Service (DMS). We demonstrated how to build a robust replication instance, connect to both a simulated on-premises database via Amazon EC2 and a fully managed Amazon RDS cluster, and move our test dataset securely. Embracing AWS DMS for these operational needs reduces latency constraints, enables seamless data transition, and leverages the power of cloud-native analytics and scaling for your database workloads. 
+
+By completing this guide you have:
+
+- ✅ Deployed a self-hosted PostgreSQL 12 database on EC2
+- ✅ Provisioned an Amazon RDS PostgreSQL 12 target database
+- ✅ Loaded a real-world test dataset using pgAdmin
+- ✅ Created a DMS Replication Instance, Source Endpoint, and Target Endpoint
+- ✅ Successfully migrated data with zero manual SQL scripting
+
+AWS DMS abstracts the heavy lifting of data replication, enabling seamless transition from unmanaged to fully managed database environments with minimal downtime.
+
+---
 
 ## References
-*   [AWS Database Migration Service (DMS)](https://aws.amazon.com/dms/)
-*   [Install Postgres on Ubuntu](https://ubuntu.com/server/docs/databases-postgresql)
-*   [Postgres downloads](https://www.postgresql.org/download/linux/ubuntu/)
-*   [Deploy an Amazon RDS Postgres database](https://aws.amazon.com/getting-started/tutorials/create-connect-postgresql-db/)
-*   [pgAdmin Postgres Tools](https://www.pgadmin.org/)
 
-Thank you for reading!
+- [AWS Database Migration Service (DMS)](https://aws.amazon.com/dms/)
+- [Install PostgreSQL on Ubuntu](https://ubuntu.com/server/docs/databases-postgresql)
+- [PostgreSQL Downloads (Linux/Ubuntu)](https://www.postgresql.org/download/linux/ubuntu/)
+- [Deploy an Amazon RDS PostgreSQL DB](https://aws.amazon.com/getting-started/tutorials/create-connect-postgresql-db/)
+- [pgAdmin — PostgreSQL Tools](https://www.pgadmin.org/)
+- [UK Land Registry Price Paid Data](https://www.gov.uk/government/statistical-data-sets/price-paid-data-downloads)
+
+---
+
+<div align="center">
+
+Made with care by [Mike Bitar](https://github.com/mikebitar) &nbsp;·&nbsp; MIT License
+
+</div>
